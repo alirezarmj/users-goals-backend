@@ -1,10 +1,11 @@
-const express = require("express");
-require("dotenv").config();
-require("colors");
+const express = require('express');
+require('dotenv').config();
+require('colors');
 
-const goalRoutes = require("./routes/goalRoutes");
-const { errorHandler } = require("./middlewares/errorHandler");
-const connectDB = require("./config/db");
+const goalRoutes = require('./routes/goalRoutes');
+const userRoutes = require('./routes/userRoutes');
+const { errorHandler } = require('./middlewares/errorHandler');
+const connectDB = require('./config/db');
 
 connectDB();
 
@@ -14,8 +15,16 @@ const app = express();
 
 app.use(express.json());
 
-app.use("/api/goals", goalRoutes);
-
+app.use('/api/goals', goalRoutes);
+app.use('/api/users', userRoutes);
+app.all('*', (req, res, next) => {
+  // res.status(404).json({
+  //   status: 'success',
+  //   message: `can not find ${req.originalUrl} on this server`,
+  // });
+  res.status(404);
+  throw new Error(`can not find ${req.originalUrl} on this server`);
+});
 app.use(errorHandler);
 
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
